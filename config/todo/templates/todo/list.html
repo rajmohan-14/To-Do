@@ -2,42 +2,163 @@
 <html>
 <head>
     <title>Todo List</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            width: 450px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102,126,234,0.4);
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-left: 8px;
+            border: none;
+            border-radius: 8px;
+            background-color: #667eea;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        li:hover {
+            background-color: #ececec;
+            transform: translateY(-2px);
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .toggle {
+            color: #28a745;
+        }
+
+        .toggle:hover {
+            color: #1e7e34;
+        }
+
+        .delete {
+            color: #dc3545;
+        }
+
+        .delete:hover {
+            color: #a71d2a;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>My Todos</h1>
+
+<div class="container">
+    <h1>✨ My Todo App</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="What needs to be done?" required>
+        <button type="submit">Add</button>
+    </form>
 
     <ul>
-        {% for todo in todos %} 
+        {% for todo in todos %}
         <li>
-            {% if todo.completed %}
-                <s>{{ todo.title }}</s>
-            {% else %}
+            <span class="{% if todo.completed %}completed{% endif %}">
                 {{ todo.title }}
-            {% endif %}
-        
-            <a href="{% url 'toggle_todo' todo.id %}">
-                {% if todo.completed %}
-                    Mark Incomplete
-                {% else %}
-                    Mark Complete
-                {% endif %}
-            </a>
-        
-            <a href="{% url 'delete_todo' todo.id %}">Delete</a>
-        </li>
-        <li>
-        {{ todo.title }}
-        <a href="{% url 'delete_todo' todo.id %}">Delete</a>
+            </span>
+
+            <div class="actions">
+                <a class="toggle" href="{% url 'toggle_todo' todo.id %}">
+                    {% if todo.completed %}
+                        Undo
+                    {% else %}
+                        Done
+                    {% endif %}
+                </a>
+
+                <a class="delete" href="{% url 'delete_todo' todo.id %}">
+                    Delete
+                </a>
+            </div>
         </li>
         {% empty %}
         <li>No todos yet</li>
         {% endfor %}
     </ul>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="title" placeholder="Enter a todo" required>
-        <button type="submit">Add</button>
-    </form>
-    
+</div>
+
 </body>
 </html>
